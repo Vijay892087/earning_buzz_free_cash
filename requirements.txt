@@ -1,6 +1,7 @@
 webdriver-manager
 undetected-chromedriver
 gunicorn
+setuptools
 requests
 attrs==25.3.0
 beautifulsoup4==4.13.4
