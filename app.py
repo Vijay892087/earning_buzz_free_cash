@@ -27,14 +27,15 @@ last_names = ["Singh", "Sharma", "Yadav", "Verma", "Patel"]
 browser = None
 
 # Get a headless browser
+import undetected_chromedriver as uc
+
 def get_browser():
-    chromedriver_autoinstaller.install()
-    options = Options()
+    options = uc.ChromeOptions()
     options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
-    options.binary_location = '/usr/bin/chromium-browser'
-    return webdriver.Chrome(options=options)
+    driver = uc.Chrome(options=options)
+    return driver
 
 def generate_random_password():
     name = random.choice(first_names)
