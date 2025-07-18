@@ -1,7 +1,14 @@
-webdriver-manager
-undetected-chromedriver
 gunicorn
+selenium
+undetected-chromedriver
+chromium
+chromedriver-autoinstaller
 setuptools
+requests
+Flask
+beautifulsoup4
+bs4
+webdriver-manager
 requests
 attrs==25.3.0
 beautifulsoup4==4.13.4
