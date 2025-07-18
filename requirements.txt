@@ -1,6 +1,6 @@
 webdriver-manager
 chromedriver-autoinstaller
-genicorn
+gunicorn
 requests
 attrs==25.3.0
 beautifulsoup4==4.13.4
