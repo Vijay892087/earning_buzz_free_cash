@@ -26,7 +26,7 @@ last_names = ["Singh", "Sharma", "Yadav", "Verma", "Patel"]
 browser = None
 
 # Get a headless browser
-import undetected_chromedriver as uc
+import undetected-chromedriver as uc
 
 def get_browser():
     options = uc.ChromeOptions()
