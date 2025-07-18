@@ -11,7 +11,7 @@ import os
 import requests
 import string
 
-app = Flask(_name_)
+app = Flask(__name__)
 app.secret_key = 'any_secret_key'
 
 # Telegram Bot Info
@@ -211,6 +211,6 @@ def logout():
     session.pop('admin', None)
     return redirect(url_for('admin_login'))
 
-if _name_ == '_main_':
+if _name_ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
