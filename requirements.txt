@@ -1,3 +1,4 @@
+webdriver-manager
 attrs==25.3.0
 beautifulsoup4==4.13.4
 bleach==6.2.0
