@@ -29,13 +29,18 @@ browser = None
 import undetected-chromedriver as uc
 
 def get_browser():
-    options = uc.ChromeOptions()
+    from selenium.webdriver.chrome.service import Service
+    import chromedriver_autoinstaller
+    chromedriver_autoinstaller.install()
+
+    options = webdriver.ChromeOptions()
+    options.binary_location = "/usr/bin/chromium-browser"
     options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
-    driver = uc.Chrome(options=options)
-    return driver
 
+    return webdriver.Chrome(service=Service(), options=options)
+    
 def generate_random_password():
     name = random.choice(first_names)
     digits = ''.join(random.choices(string.digits, k=4))
