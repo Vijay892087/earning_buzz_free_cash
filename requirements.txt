@@ -1,5 +1,5 @@
 webdriver-manager
-chromedriver-autoinstaller
+undetected-chromedriver
 gunicorn
 requests
 attrs==25.3.0
